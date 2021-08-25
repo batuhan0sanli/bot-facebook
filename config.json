@@ -1,0 +1,7 @@
+{
+  "driver_options": {
+    "path": "./chromedriver",
+    "headless": true,
+    "window_size": "1920, 1080"
+  }
+}

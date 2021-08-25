@@ -1,5 +1,6 @@
 import hashlib
 from __init__ import url_md5_csv
+from config import Config
 
 
 class Facebook:
@@ -7,6 +8,9 @@ class Facebook:
         self.url = url
         self.md5 = self.__get_md5()
         self.url_md5_csv = url_md5_csv
+
+        # Config
+        self.config = Config()
 
         # url-md5.csv
         self.__save_url_md5_csv()
@@ -27,3 +31,4 @@ if __name__ == '__main__':
 
     cand1 = Facebook(url1)
     cand2 = Facebook(url2)
+    print(cand1.config.driver_path)
