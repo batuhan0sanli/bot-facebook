@@ -20,6 +20,7 @@ class Facebook:
         # Selenium
         self.driver = self.__set_driver()
         self.__get_url()
+        self.__save_main_screenshot()
         self.close()
 
     def __get_md5(self):
@@ -42,6 +43,9 @@ class Facebook:
     def __get_url(self):
         self.driver.get(self.url)
         return self.driver
+
+    def __save_main_screenshot(self):
+        self.driver.save_screenshot(f'bot-facebook_{self.md5}.png')
 
     def close(self):
         self.driver.close()
