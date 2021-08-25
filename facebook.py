@@ -1,6 +1,8 @@
 import hashlib
 from __init__ import url_md5_csv
 from config import Config
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 class Facebook:
@@ -15,6 +17,11 @@ class Facebook:
         # url-md5.csv
         self.__save_url_md5_csv()
 
+        # Selenium
+        self.driver = self.__set_driver()
+        self.__get_url()
+        self.close()
+
     def __get_md5(self):
         return hashlib.md5(self.url.encode()).hexdigest()
 
@@ -24,6 +31,22 @@ class Facebook:
         self.url_md5_csv.writerow(row)
         self.url_md5_csv.close()
 
+    def __set_driver(self):
+        options = Options()
+        if self.config.driver_headless:
+            options.add_argument('--headless')
+        options.add_argument(f'--window-size={self.config.driver_window_size}')
+        self.driver = webdriver.Chrome(self.config.driver_path, options=options)
+        return self.driver
+
+    def __get_url(self):
+        self.driver.get(self.url)
+        return self.driver
+
+    def close(self):
+        self.driver.close()
+        return self.driver
+
 
 if __name__ == '__main__':
     url1 = 'https://www.facebook.com/profile.php?id=100003563130499'
@@ -31,4 +54,3 @@ if __name__ == '__main__':
 
     cand1 = Facebook(url1)
     cand2 = Facebook(url2)
-    print(cand1.config.driver_path)
