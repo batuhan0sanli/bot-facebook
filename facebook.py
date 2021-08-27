@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
+from save_csv import Csv
 from datetime import datetime
 import time
 
@@ -129,7 +130,7 @@ class Facebook:
         utime = date['data-utime']
         return self.utime2Ym(utime)
 
-    def __find_posts_wDate(self, posts, desired_date, ID):
+    def __find_posts_wDate(self, posts, desired_date, ID, dom_csv):
         self.__set_unlimited_window_size()
         for post in posts:
 
@@ -143,9 +144,13 @@ class Facebook:
                 comment = self.__find_comment(soup)
                 share = self.__find_share(soup)
                 num = "{:04d}".format(ID + 1)
-                # ISLEMLER BURAYA#
+
+                # Save CSV
+                row = [like, comment, share]
+                dom_csv.writerow(row)
+
                 ID += 1
-                post.screenshot(f'./OCR/bot-facebook_{desired_date}_{self.md5}_{ID}.png')
+                post.screenshot(f'./OCR/bot-facebook_{desired_date}_{self.md5}_{num}.png')
         if desired_date != date and ID != 0:
             return True, ID
         else:
@@ -159,6 +164,12 @@ class Facebook:
         self.myMonth = desired_date
         self.__get_xpath = lambda num: "/" + "/div[@class='_1xnd']" * num + "/div[@class='_4-u2 _4-u8']"
 
+        # Csv File
+        fieldnames = ['Begeni', 'Yorum', 'Paylasim']
+        dom_csv = Csv(f'./DOM/bot-facebook{self.md5}.csv', fieldnames=fieldnames)
+        dom_csv.initialize(close_file=True)
+        dom_csv.open(mode='a')
+
         ID = 0
         num_of_see_more = 1
         timeline = self.__timeline_element(driver=self.driver)
@@ -167,11 +178,12 @@ class Facebook:
             posts = WebDriverWait(timeline, timeout=self.config.driver_timeout).until(
                 EC.presence_of_all_elements_located((By.XPATH, self.__get_xpath(num_of_see_more))))
 
-            isStop, ID = self.__find_posts_wDate(posts, desired_date, ID)
+            isStop, ID = self.__find_posts_wDate(posts, desired_date, ID, dom_csv)
             if isStop: break
             timeline = self.__see_more_timeline(timeline)
             num_of_see_more += 1
 
+        dom_csv.close()
         self.__save_fullscreen_screenshot()
 
 
