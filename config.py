@@ -21,6 +21,7 @@ class Config:
         self.findElement_like = None
         self.findElement_comment = None
         self.findElement_share = None
+        self.findElement_date = None
 
         self.__readFile()
 
@@ -41,3 +42,4 @@ class Config:
             self.findElement_like = conf.get('find_element_options').get('div_class_like')
             self.findElement_comment = conf.get('find_element_options').get('a_class_comment')
             self.findElement_share = conf.get('find_element_options').get('a_class_share')
+            self.findElement_date = conf.get('find_element_options').get('type_date')

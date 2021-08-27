@@ -14,7 +14,8 @@
     "xpath_posts": "//div[@class='_4-u2 _4-u8']",
     "div_class_like": "UFILikeSentenceText",
     "a_class_comment": "_3hg- _42ft",
-    "a_class_share": "_3rwx _42ft"
+    "a_class_share": "_3rwx _42ft",
+    "type_date": "abbr"
 
   }
 }
