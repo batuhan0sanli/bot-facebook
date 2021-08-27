@@ -67,7 +67,8 @@ class Facebook:
 
     def __click_posts(self):
         posts_button = self.driver.find_element_by_link_text(self.config.findElement_clickPosts)
-        posts_button.click()
+        # posts_button.click()
+        self.driver.execute_script("arguments[0].click();", posts_button)
         time.sleep(self.config.driver_sleep_after_action)
 
     def __scroll(self):
@@ -100,7 +101,13 @@ class Facebook:
         like = soup.find('span', class_='_81hb')
 
         if not like is None:
-            return like.text
+            try:
+                return int(like.text)
+            except ValueError:
+                if 'B' in like.text:
+                    return int(like.text.split()[0]) * 1000
+                elif 'M' in like.text:
+                    return int(like.text.split()[0]) * 1000000
         else:
             like_sentence = soup.find('div', class_=self.config.findElement_like).text
 
@@ -166,7 +173,7 @@ class Facebook:
 
         # Csv File
         fieldnames = ['Begeni', 'Yorum', 'Paylasim']
-        dom_csv = Csv(f'./DOM/bot-facebook{self.md5}.csv', fieldnames=fieldnames)
+        dom_csv = Csv(f'./DOM/bot-facebook_{self.md5}.csv', fieldnames=fieldnames)
         dom_csv.initialize(close_file=True)
         dom_csv.open(mode='a')
 
