@@ -2,6 +2,20 @@
   "driver_options": {
     "path": "./chromedriver",
     "headless": true,
-    "window_size": "1920, 1080"
+    "window_size": "1920, 1080",
+    "sleep_after_action": 5,
+    "timeout": 5
+  },
+  "find_element_options": {
+    "text_click_posts": "Gönderiler",
+    "text_close_popUpLogin": "Şimdi Değil",
+    "text_and_word": "ve",
+    "xpath_timeline": "//*[@class='_1xnd']",
+    "xpath_posts": "//div[@class='_4-u2 _4-u8']",
+    "div_class_like": "UFILikeSentenceText",
+    "a_class_comment": "_3hg- _42ft",
+    "a_class_share": "_3rwx _42ft",
+    "type_date": "abbr"
+
   }
 }
