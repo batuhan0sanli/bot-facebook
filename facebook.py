@@ -100,7 +100,13 @@ class Facebook:
         like = soup.find('span', class_='_81hb')
 
         if not like is None:
-            return like.text
+            try:
+                return int(like.text)
+            except ValueError:
+                if 'B' in like.text:
+                    return int(like.text.split()[0]) * 1000
+                elif 'M' in like.text:
+                    return int(like.text.split()[0]) * 1000000
         else:
             like_sentence = soup.find('div', class_=self.config.findElement_like).text
 
