@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
+import requests
 from save_csv import Csv
 from datetime import datetime
 import time
@@ -20,6 +21,7 @@ class Facebook:
         self.url_md5_csv = url_md5_csv
         self.myMonth = None
         self.posts_list = None
+        self.login_required = self.__is_login_required()
 
         # Config
         self.config = Config()
@@ -30,8 +32,8 @@ class Facebook:
         # Selenium
         self.driver = self.__set_driver()
         self.__get_url()
+        if self.login_required: self.login()
         self.__save_main_screenshot()
-        #self.close()
 
     def __get_md5(self):
         return hashlib.md5(self.url.encode()).hexdigest()
@@ -193,6 +195,19 @@ class Facebook:
         dom_csv.close()
         self.__save_fullscreen_screenshot()
 
+    def __is_login_required(self):
+        r = requests.get(self.url)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        finded = soup.find('div', class_='_585r _50f4') # Devam etmek icin giris yapmalisin -> div class'i
+        return True if finded else False
+
+    def __login(self):
+        email = self.driver.find_element_by_id("email")
+        password = self.driver.find_element_by_id("pass")
+        submit = self.driver.find_element_by_id("loginbutton")
+        email.send_keys(self.config.login_email)
+        password.send_keys(self.config.login_password)
+        submit.click()
 
     def close(self):
         self.driver.close()
