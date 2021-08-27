@@ -16,7 +16,6 @@ import time
 ####################
 options = Options()
 options.add_argument('--headless')
-# options.add_argument("--window-size=1920,1080")
 driver = webdriver.Chrome('./chromedriver', options=options)
 
 
@@ -112,95 +111,56 @@ def find_date(soup):
 ## === TEST AREA === ##
 #######################
 
-# url = 'https://www.facebook.com/EsenyurtBLDYS'
-url = 'https://www.facebook.com/Hülya-Erdem-111751313846537'
+url = 'https://www.facebook.com/EsenyurtBLDYS'
+# url = 'https://www.facebook.com/Hülya-Erdem-111751313846537'
 driver.get(url)
 
 click_posts()
 scroll()
 close_popUpLogin(driver)
 
-# timeline = driver.find_element_by_xpath("//*[@class='_1xnd']")
-
-# BU KULLANILACAK
-# timeline = timeline_element(driver=driver)
-# posts = WebDriverWait(timeline, timeout=10).until(
-#     EC.presence_of_all_elements_located((By.XPATH, "//div[@class='_1xnd']/div[@class='_4-u2 _4-u8']")))
-
-# set_unlimited_window_size()
-# timeline.screenshot('foo_timeline.png')
 
 
-
-
-
-def main(posts, desired_date, ID):
+def find_posts_wDate(posts, desired_date, ID):
     set_unlimited_window_size()
     for post in posts:
-        # print(post.size)
-        # print(post.location)
-        # print(post.get_attribute('class'))
+
         html = post.get_attribute('innerHTML')
-        # print(type(html))
         soup = BeautifulSoup(html, 'html.parser')
 
         date = find_date(soup)
-        print("====================================================================", date)
-        if desired_date == date or "202108" == date:
+        if desired_date == date and not post.id in posts_list:
+            posts_list.add(post.id)
             like = find_like(soup)
             comment = find_comment(soup)
             share = find_share(soup)
             num = "{:04d}".format(ID + 1)
-            print(f"ID: {num}  |  DATE: {date}  |  LIKE: {like}  |  COMMENT: {comment}  |  SHARE: {share}")
+            # print(f"ID: {num}  |  DATE: {date}  |  LIKE: {like}  |  COMMENT: {comment}  |  SHARE: {share}")
             ID += 1
-            post.screenshot(f'foo{ID}.png')
-        elif desired_date != date and ID != 0:
-            return True, ID
-    return False, ID
+            post.screenshot(f'./OCR/{ID}.png')
+    if desired_date != date and ID != 0:
+        return True, ID
+    else:
+        return False, ID
 
 
-# found = False
-# continue_loop = True
-desired_date = "202107"
+desired_date = "202108"
+get_xpath = lambda num: "/" + "/div[@class='_1xnd']" * num + "/div[@class='_4-u2 _4-u8']"
+
 
 ID = 0
 num_of_see_more = 1
+posts_list = set()
 timeline = timeline_element(driver=driver)
-
-get_xpath = lambda num: "/" + "/div[@class='_1xnd']" * num + "/div[@class='_4-u2 _4-u8']"
-
 while True:
-    print(f"{num_of_see_more}. Arama")
-    # posts = WebDriverWait(timeline, timeout=10).until(
-    #     EC.presence_of_all_elements_located((By.XPATH, "//div[@class='_1xnd']/div[@class='_4-u2 _4-u8']")))
-
+    print(f"{num_of_see_more}. scroll")
     posts = WebDriverWait(timeline, timeout=10).until(
         EC.presence_of_all_elements_located((By.XPATH, get_xpath(num_of_see_more))))
 
-    old_post_num = num_of_see_more * 8 - 8  # 8 => Bir gösterimdeki görsel sayısı
-    print("num of posts once", len(posts))
-    posts = posts[old_post_num:]
-    print("num of posts", len(posts))
-
-    isStop, ID = main(posts, desired_date, ID)
-    print("isStop", isStop)
+    isStop, ID = find_posts_wDate(posts, desired_date, ID)
     if isStop: break
     timeline = see_more_timeline(timeline)
     num_of_see_more += 1
-    ID += 1000
-
-
-
-
-# while continue_loop:
-#     continue_loop = main(posts, desired_date)
-#     timeline = see_more_timeline(timeline)
-#     # posts = WebDriverWait(timeline, timeout=10).until(
-#     #     EC.presence_of_all_elements_located((By.XPATH, "//div[@class='_1xnd']/div[@class='_1xnd']")))
-#
-#     posts = timeline.find_elements_by_xpath("//div[@class='_1xnd']/div[20]")
-#     print("!! See more triggered !!")
 
 fullscreen_screenshot()
-
 driver.close()
