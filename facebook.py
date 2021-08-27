@@ -67,7 +67,8 @@ class Facebook:
 
     def __click_posts(self):
         posts_button = self.driver.find_element_by_link_text(self.config.findElement_clickPosts)
-        posts_button.click()
+        # posts_button.click()
+        self.driver.execute_script("arguments[0].click();", posts_button)
         time.sleep(self.config.driver_sleep_after_action)
 
     def __scroll(self):
