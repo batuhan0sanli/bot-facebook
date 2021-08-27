@@ -32,7 +32,14 @@ def giveDOM(csv_path):
 
 
 if __name__ == '__main__':
-    MY_DIR = "OCR"
+    import argparse
+
+    # ArgParse
+    parse = argparse.ArgumentParser()
+    parse.add_argument('--dir', required=True,)
+    args = parse.parse_args()
+
+    MY_DIR = args.dir
     csv_files = giveCsv(MY_DIR)
 
     fieldnames = ['URL_MD5', 'Begeni', 'Yorum', 'Paylasim']
