@@ -23,6 +23,10 @@ class Config:
         self.findElement_share = None
         self.findElement_date = None
 
+        # Login Options
+        self.login_email = None
+        self.login_password = None
+
         self.__readFile()
 
     def __readFile(self):
@@ -43,3 +47,6 @@ class Config:
             self.findElement_comment = conf.get('find_element_options').get('a_class_comment')
             self.findElement_share = conf.get('find_element_options').get('a_class_share')
             self.findElement_date = conf.get('find_element_options').get('type_date')
+
+            self.login_email = conf.get('login_options').get('email')
+            self.login_password = conf.get('login_options').get('password')
