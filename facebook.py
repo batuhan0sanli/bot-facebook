@@ -173,7 +173,7 @@ class Facebook:
 
         # Csv File
         fieldnames = ['Begeni', 'Yorum', 'Paylasim']
-        dom_csv = Csv(f'./DOM/bot-facebook{self.md5}.csv', fieldnames=fieldnames)
+        dom_csv = Csv(f'./DOM/bot-facebook_{self.md5}.csv', fieldnames=fieldnames)
         dom_csv.initialize(close_file=True)
         dom_csv.open(mode='a')
 
