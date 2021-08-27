@@ -145,7 +145,8 @@ def main(posts, desired_date, ID):
         soup = BeautifulSoup(html, 'html.parser')
 
         date = find_date(soup)
-        if desired_date == date:
+        print("====================================================================", date)
+        if desired_date == date or "202108" == date:
             like = find_like(soup)
             comment = find_comment(soup)
             share = find_share(soup)
@@ -155,13 +156,12 @@ def main(posts, desired_date, ID):
             post.screenshot(f'foo{ID}.png')
         elif desired_date != date and ID != 0:
             return True, ID
-        print("========================================================================\n")
     return False, ID
 
 
 # found = False
 # continue_loop = True
-desired_date = "202108"
+desired_date = "202107"
 
 ID = 0
 num_of_see_more = 1
@@ -170,17 +170,24 @@ timeline = timeline_element(driver=driver)
 get_xpath = lambda num: "/" + "/div[@class='_1xnd']" * num + "/div[@class='_4-u2 _4-u8']"
 
 while True:
+    print(f"{num_of_see_more}. Arama")
     # posts = WebDriverWait(timeline, timeout=10).until(
     #     EC.presence_of_all_elements_located((By.XPATH, "//div[@class='_1xnd']/div[@class='_4-u2 _4-u8']")))
 
     posts = WebDriverWait(timeline, timeout=10).until(
         EC.presence_of_all_elements_located((By.XPATH, get_xpath(num_of_see_more))))
 
-    isStop, ID = main(posts, desired_date, ID)
+    old_post_num = num_of_see_more * 8 - 8  # 8 => Bir gösterimdeki görsel sayısı
+    print("num of posts once", len(posts))
+    posts = posts[old_post_num:]
+    print("num of posts", len(posts))
 
+    isStop, ID = main(posts, desired_date, ID)
+    print("isStop", isStop)
     if isStop: break
     timeline = see_more_timeline(timeline)
     num_of_see_more += 1
+    ID += 1000
 
 
 
